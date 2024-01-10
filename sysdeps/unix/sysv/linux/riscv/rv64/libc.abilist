@@ -2596,6 +2596,7 @@ GLIBC_2.36 pidfd_open F
 GLIBC_2.36 pidfd_send_signal F
 GLIBC_2.36 process_madvise F
 GLIBC_2.36 process_mrelease F
+GLIBC_2.37 __riscv_hwprobe F
 GLIBC_2.38 __isoc23_fscanf F
 GLIBC_2.38 __isoc23_fwscanf F
 GLIBC_2.38 __isoc23_scanf F
