@@ -53,4 +53,23 @@
     sc_ret;								      \
   })
 
+#define INTERNAL_VSYSCALL(name, nr, args...)				      \
+  ({									      \
+    __label__ out;							      \
+    long int sc_ret;							      \
+									      \
+    __typeof (GLRO(dl_vdso_##name)) vdsop = GLRO(dl_vdso_##name);	      \
+    if (vdsop != NULL)							      \
+      {									      \
+	sc_ret = INTERNAL_VSYSCALL_CALL (vdsop, nr, ##args);	      	      \
+	if ((!INTERNAL_SYSCALL_ERROR_P (sc_ret)) ||			      \
+	    (INTERNAL_SYSCALL_ERRNO (sc_ret) != ENOSYS))		      \
+	  goto out;							      \
+      }									      \
+									      \
+    sc_ret = INTERNAL_SYSCALL_CALL (name, ##args);		      	      \
+  out:									      \
+    sc_ret;								      \
+  })
+
 #endif /* SYSDEP_VDSO_LINUX_H  */
