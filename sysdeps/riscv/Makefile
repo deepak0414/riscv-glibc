@@ -1,6 +1,7 @@
 ifeq ($(subdir),misc)
 sysdep_headers += sys/asm.h
 endif
+sysdep-dl-routines += dl-cfi
 
 ifeq ($(subdir),elf)
 gen-as-const-headers += dl-link.sym
