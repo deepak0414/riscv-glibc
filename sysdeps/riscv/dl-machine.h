@@ -30,12 +30,15 @@
 #include <dl-machine-rel.h>
 #if defined(__riscv_zicfilp) || defined(__riscv_zicfiss)
 # include <dl-cfi.h>
+extern void _dl_cfi_setup_features(unsigned int features);
 /* FIXME: Use the definition from sysdep.h  */
 # ifdef __riscv_zicfilp
 #  define SET_LPAD   lui  t2, 1
 # else
 #  define SET_LPAD   nop
 # endif
+#else
+# define RTLD_START_ENABLE_RISCV_CFI
 #endif
 
 #ifndef _RTLD_PROLOGUE
@@ -116,6 +119,8 @@ elf_machine_dynamic (void)
 	" _RTLD_PROLOGUE (_dl_start_user) "\
 	# Stash user entry point in s0.\n\
 	mv s0, a0\n\
+	# Setup CFI features\n\
+	" RTLD_START_ENABLE_RISCV_CFI "\
 	# Load the adjusted argument count.\n\
 	" STRINGXP (REG_L) " a1, 0(sp)\n\
 	# Call _dl_init (struct link_map *main_map, int argc, char **argv, char **env) \n\
