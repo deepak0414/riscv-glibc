@@ -28,6 +28,12 @@
 #include <dl-irel.h>
 #include <dl-static-tls.h>
 #include <dl-machine-rel.h>
+#ifdef __riscv_zicfilp
+/* FIXME: Use the definition from sysdep.h  */
+# define SET_LPAD   lui  t2, 1
+#else
+# define SET_LPAD   nop
+#endif
 
 #ifndef _RTLD_PROLOGUE
 # define _RTLD_PROLOGUE(entry)						\
@@ -126,6 +132,7 @@ elf_machine_dynamic (void)
 	# Pass our finalizer function to _start.\n\
 	lla a0, _dl_fini\n\
 	# Jump to the user entry point.\n\
+        " STRINGXV (SET_LPAD) "\n\
 	jr s0\n\
 	" _RTLD_EPILOGUE (ENTRY_POINT) \
 	  _RTLD_EPILOGUE (_dl_start_user) "\

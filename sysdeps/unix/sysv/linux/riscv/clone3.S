@@ -36,6 +36,7 @@
 
         .text
 ENTRY(__clone3)
+	LPAD
 	/* Sanity check args.  */
 	beqz	a0, L(invalid)	/* No NULL cl_args pointer.  */
 	beqz	a2, L(invalid)  /* No NULL function pointer.  */
@@ -68,6 +69,7 @@ L(thread_start):
 	/* Restore the arg for user's function and call the user's
 	   function.  */
 	mv		a0, a3	/* Argument pointer.  */
+	SET_LPAD
 	jalr		a2
 
 	/* Call exit with the function's return value.  */

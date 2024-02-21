@@ -21,6 +21,8 @@
 
 /* void *memcpy(void *, const void *, size_t) */
 ENTRY (__memcpy_noalignment)
+        LPAD
+
 	move t6, a0  /* Preserve return value */
 
 	/* Bail if 0 */
