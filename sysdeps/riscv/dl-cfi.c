@@ -15,6 +15,7 @@
    License along with the GNU C Library; if not, see
    <https://www.gnu.org/licenses/>.  */
 
+#include "feature-control.h"
 #include <asm-generic/errno-base.h>
 #include <unistd.h>
 #include <libintl.h>
@@ -49,15 +50,29 @@ dl_check_legacy_object (struct link_map *m, unsigned int *feature_1)
 
       *feature_1 &= l->l_riscv_feature_1_and;
     }
+#ifdef __riscv_zicfilp
+  if (GL(dl_riscv_feature_control).lp == cfi_always_on)
+    *feature_1 |= GNU_PROPERTY_RISCV_FEATURE_1_FCFI;
+#endif
+#ifdef __riscv_zicfiss
+  if (GL(dl_riscv_feature_control).ss == cfi_always_on)
+    *feature_1 |= GNU_PROPERTY_RISCV_FEATURE_1_BCFI;
+#endif
 }
 
 #ifdef SHARED
 static void
 dl_cfi_check_startup (struct link_map *m, unsigned int *feature_1)
 {
-  /* FIXME: Add tunables here  */
-  if (!*feature_1)
-    return;
+#ifdef __riscv_zicfilp
+  if (GL(dl_riscv_feature_control).lp == cfi_always_off)
+    *feature_1 &= ~GNU_PROPERTY_RISCV_FEATURE_1_FCFI;
+#endif
+#ifdef __riscv_zicfiss
+  if (GL(dl_riscv_feature_control).ss == cfi_always_off)
+    *feature_1 &= ~GNU_PROPERTY_RISCV_FEATURE_1_BCFI;
+#endif
+
   dl_check_legacy_object (m, feature_1);
 
   /* Update GL(dl_riscv_feature_1)  */
@@ -95,9 +110,30 @@ _dl_cfi_check (struct link_map *l, const char *program)
   if (program)
     {
       GL(dl_riscv_feature_1) = l->l_riscv_feature_1_and;
-      feature_1 = l->l_riscv_feature_1_and;
     }
 #endif /* SHARED */
+
+  unsigned int supported_exts = 0;
+  unsigned int always_on_exts = 0;
+
+#ifdef __riscv_zicfilp
+  supported_exts += 1;
+  always_on_exts += (GL(dl_riscv_feature_control).lp == cfi_always_on);
+#endif
+#ifdef __riscv_zicfiss
+  supported_exts += 1;
+  always_on_exts += (GL(dl_riscv_feature_control).ss == cfi_always_on);
+#endif
+
+  feature_1 = GL(dl_riscv_feature_1);
+
+  /* No legacy check needed if all cfi exts are always on */
+  if (supported_exts == always_on_exts)
+    return;
+
+  /* No legacy check needed if all cfi exts are off */
+  if (feature_1 == 0)
+    return;
 
 #ifdef SHARED
   if (program)
