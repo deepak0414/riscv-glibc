@@ -51,6 +51,36 @@ ENTRY (__longjmp)
 	FREG_L fs11,14*SZREG+11*SZFREG(a0)
 #endif
 
+#ifdef __riscv_zicfiss
+        /* read ssp into t0  */
+        ssrdp t0
+        /* skip unwinding if ss is not enabled  */
+        beqz  t0, unwind_fin
+# ifndef __riscv_float_abi_soft
+	REG_L t1, 14*SZREG+12*SZFREG(a0)
+# else
+	REG_L t1, 14*SZREG(a0)
+# endif
+unwind:
+        /* should not be taken in normal condition  */
+        bleu  t1, t0, unwind_fin
+        /* The unwiding algorithm came from the zicfiss spec, increase ssp
+           by at most a page size to ensure always run into a guard page
+           before accidentally point to another legal shadow stack page  */
+        /* t0 = (t1 - t0 >= 4096) ? t0 + 4096 : t1  */
+        lui   a0, 1
+        add   t0, t0, a0
+        bleu  t0, t1, 1f
+        mv    t0, t1
+1:
+        csrw  ssp, t0
+        /* Test if the location pointed by ssp is legal  */
+        sspush x5
+        sspopchk x5
+        j unwind
+unwind_fin:
+#endif
+
 	seqz a0, a1
 	add  a0, a0, a1   # a0 = (a1 == 0) ? 1 : a1
 	ret
