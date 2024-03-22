@@ -55,7 +55,9 @@ _dl_process_gnu_property (struct link_map *l, int fd, uint32_t type,
       if (datasz != 4)
         return -1;
 
+#if defined(__riscv_zicfilp) || defined(__riscv_zicfiss)
       unsigned int feature_1 = *(unsigned int *) data;
+#endif
 #ifdef __riscv_zicfilp
       if (feature_1 & GNU_PROPERTY_RISCV_FEATURE_1_FCFI)
         l->l_riscv_feature_1_and |= GNU_PROPERTY_RISCV_FEATURE_1_FCFI;

@@ -31,14 +31,14 @@
 #if defined(__riscv_zicfilp) || defined(__riscv_zicfiss)
 # include <dl-cfi.h>
 extern void _dl_cfi_setup_features(unsigned int features);
-/* FIXME: Use the definition from sysdep.h  */
-# ifdef __riscv_zicfilp
-#  define SET_LPAD   lui  t2, 1
-# else
-#  define SET_LPAD   nop
-# endif
 #else
 # define RTLD_START_ENABLE_RISCV_CFI
+#endif
+/* FIXME: Use the definition from sysdep.h  */
+#ifdef __riscv_zicfilp
+# define SET_LPAD   lui  t2, 1
+#else
+# define SET_LPAD   nop
 #endif
 
 #ifndef _RTLD_PROLOGUE
