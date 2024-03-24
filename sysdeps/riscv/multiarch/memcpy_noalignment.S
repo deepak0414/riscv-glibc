@@ -35,6 +35,8 @@
 
 	.attribute unaligned_access, 1
 ENTRY (__memcpy_noalignment)
+        LPAD
+
 	beq	a2, zero, L(ret)
 
 	/* if LEN < SZREG jump to tail handling.  */
