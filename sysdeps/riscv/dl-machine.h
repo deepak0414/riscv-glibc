@@ -30,7 +30,7 @@
 #include <dl-machine-rel.h>
 #if defined(__riscv_zicfilp) || defined(__riscv_zicfiss)
 # include <dl-cfi.h>
-extern void _dl_cfi_setup_features(unsigned int features);
+extern void _dl_cfi_setup_features (unsigned int features);
 #else
 # define RTLD_START_ENABLE_RISCV_CFI
 #endif
@@ -40,6 +40,7 @@ extern void _dl_cfi_setup_features(unsigned int features);
 #else
 # define SET_LPAD
 #endif
+extern void _dl_riscv_init_cpu_features (void);
 
 #ifndef _RTLD_PROLOGUE
 # define _RTLD_PROLOGUE(entry)						\
