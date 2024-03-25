@@ -1,5 +1,5 @@
 /* Linux/RISC-V CFI initializers function.
-   Copyright (C) 2018-2024 Free Software Foundation, Inc.
+   Copyright (C) 2024 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
