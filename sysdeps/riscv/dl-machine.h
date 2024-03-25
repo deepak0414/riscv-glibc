@@ -38,7 +38,7 @@ extern void _dl_cfi_setup_features(unsigned int features);
 #ifdef __riscv_zicfilp
 # define SET_LPAD   lui  t2, 1
 #else
-# define SET_LPAD   nop
+# define SET_LPAD
 #endif
 
 #ifndef _RTLD_PROLOGUE

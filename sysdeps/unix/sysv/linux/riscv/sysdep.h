@@ -100,8 +100,8 @@ GNU_PROPERTY (FEATURE_1_AND, __VALUE_FOR_FEATURE_1_AND)
 # define SET_LPAD   lui  t2, 1
 # define LPAD       lpad 1
 #else
-# define SET_LPAD   nop
-# define LPAD       nop
+# define SET_LPAD
+# define LPAD
 #endif
 
 # define ENTRY(name) LEAF(name)
